@@ -9,7 +9,7 @@ The package is in honour for all the missing people who have left us.
 The PDM package is used to find the missing values associated in the dataset - both categorical and numerical. 
 
 # Why use this package?
-This package is pretty straight forward - you give the data frame and threshold value. Sometimes there will be too many missing values in a particular feature and it is not a good practice to vaguely impute values of our choice. Threshold takes a value as input from the user and the package will compare the percentage of missing values in the columns less than the given threshold and remove the other columns.
+This package is pretty straight forward - you give the data frame and threshold value. Sometimes there will be too many missing values in a particular feature and it is not a good practice to vaguely impute values of our choice. Threshold takes a value as input from the user and the package will compare the percentage of missing values in the columns and remove the columns with missing value percentage greater than threshold value.
 
 It then imputes (both categorical and continuous) the missing values of other column disregarding the column(s) it has axed.
 Categorical imputation is done by decision tree and continuous imputation is done through mean/median depending upon the normality.
