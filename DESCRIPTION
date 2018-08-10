@@ -1,0 +1,11 @@
+Package: PDM
+Type: Package
+Title: Impute missing values in a data frame
+Version: 1.0.0
+Author: Mervyn Akash <codemonger>
+Maintainer: Mervyn Akash <mervyn.akash10@gmail.com>
+Description: This package takes two parameters as input: data frame and threshold value to impute missing values in the data frame. Threshold value is used to remove columns containing percentage of missing values more than the inputed value.
+License: GPL-2
+Encoding: UTF-8
+LazyData: true
+Imports: rpart
