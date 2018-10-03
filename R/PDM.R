@@ -50,15 +50,22 @@ pdm_impute <- function(df,threshold = 20){
 
   miss_val_fact <- names(miss_val[miss_val == 1])
 
+  shap_test <- 0
 
-  if(length(miss_val_cont) > 1){
-    sw <- sapply(df[,c(miss_val_cont)], norm_test)
+  if(nrow(df) < 5000){
+    if(length(miss_val_cont) > 1){
+      sw <- sapply(df[,c(miss_val_cont)], norm_test)
+    } else {
+      sw_test <- shapiro.test(df[,c(miss_val_cont)])
+      sw <- sw_test$p.value
+    }
   } else {
-    sw_test <- shapiro.test(df[,c(miss_val_cont)])
-    sw <- sw_test$p.value
+    shap_test <- 1
   }
 
-  impute_factor <- ifelse(sw > 0.05, 1, 2)
+  if(shap_test == 0){
+    impute_factor <- ifelse(sw > 0.05, 1, 2)
+  }
 
 
   cat_df <- df[,c(factor_col)]
@@ -80,8 +87,8 @@ pdm_impute <- function(df,threshold = 20){
   # df2 <- df
   # df <- df2
 
-  ID <- df$Id
-  df$Id <- NULL
+  # ID <- df$Id
+  # df$Id <- NULL
 
   if(optimal_col %in% names(miss_val)){
     df <- categorical_impute(df, optimal_col, colnames(df)[!colnames(df) %in% c(names(miss_val_dupl),optimal_col)])
@@ -91,15 +98,21 @@ pdm_impute <- function(df,threshold = 20){
 
   k <- 1
   for(i in 1:length(miss_val)){
-    if(miss_val[i] == 2){
+    if(shap_test == 1){
       print(names(miss_val[i]))
-      df <- continuous_impute(df,miss_val[i],optimal_col,impute_factor[k])
+      df <- continuous_impute(df, miss_val[i], optimal_col, 2)
       miss_val_dupl <- miss_val_dupl[!names(miss_val_dupl) %in% names(miss_val[i])]
-      k = k + 1
     } else {
-      print(names(miss_val[i]))
-      df <- categorical_impute(df,names(miss_val[i]), colnames(df)[!colnames(df) %in% names(miss_val_dupl)])
-      miss_val_dupl <- miss_val_dupl[!names(miss_val_dupl) %in% names(miss_val[i])]
+      if(miss_val[i] == 2){
+        print(names(miss_val[i]))
+        df <- continuous_impute(df,miss_val[i],optimal_col,impute_factor[k])
+        miss_val_dupl <- miss_val_dupl[!names(miss_val_dupl) %in% names(miss_val[i])]
+        k = k + 1
+      } else {
+        print(names(miss_val[i]))
+        df <- categorical_impute(df,names(miss_val[i]), colnames(df)[!colnames(df) %in% names(miss_val_dupl)])
+        miss_val_dupl <- miss_val_dupl[!names(miss_val_dupl) %in% names(miss_val[i])]
+      }
     }
   }
 
@@ -109,7 +122,6 @@ pdm_impute <- function(df,threshold = 20){
   # df <- new_df
 
   df[,non_cont] <- data.frame(sapply(df[,non_cont], function(x){as.numeric(as.character(x))}))
-  df$Id <- ID
 
   return(df)
 }
