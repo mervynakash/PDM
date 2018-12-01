@@ -99,9 +99,19 @@ pdm_impute <- function(df,threshold = 20){
   k <- 1
   for(i in 1:length(miss_val)){
     if(shap_test == 1){
-      print(names(miss_val[i]))
-      df <- continuous_impute(df, miss_val[i], optimal_col, 2)
-      miss_val_dupl <- miss_val_dupl[!names(miss_val_dupl) %in% names(miss_val[i])]
+      # print(names(miss_val[i]))
+      # df <- continuous_impute(df, miss_val[i], optimal_col, 2)
+      # miss_val_dupl <- miss_val_dupl[!names(miss_val_dupl) %in% names(miss_val[i])]
+      if(miss_val[i] == 2){
+        print(names(miss_val[i]))
+        df <- continuous_impute(df,miss_val[i],optimal_col,2)
+        miss_val_dupl <- miss_val_dupl[!names(miss_val_dupl) %in% names(miss_val[i])]
+        k = k + 1
+      } else {
+        print(names(miss_val[i]))
+        df <- categorical_impute(df,names(miss_val[i]), colnames(df)[!colnames(df) %in% names(miss_val_dupl)])
+        miss_val_dupl <- miss_val_dupl[!names(miss_val_dupl) %in% names(miss_val[i])]
+      }
     } else {
       if(miss_val[i] == 2){
         print(names(miss_val[i]))
